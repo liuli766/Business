@@ -1,0 +1,197 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/TabBar/Order/Order",
+			"style": {
+				"navigationBarTitleText": "外卖订单"
+			}
+		}, {
+			"path": "pages/TabBar/complepage/complepage",
+			"style": {
+			"navigationBarTitleText": "发单列表"
+			}
+		}, {
+			"path": "pages/TabBar/ShopManagement/ShopManagement",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/TabBar/Mine/Mine",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		}
+        ,{
+            "path" : "pages/login/login",
+            "style" : {
+				"navigationStyle": "custom"
+			}
+        }
+    ],
+	"subPackages":[
+		{
+			"root": "pages/Detail",
+			"pages": [
+				{
+					"path": "reminDetail/reminDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}
+				
+				, {
+					"path": "receiveDetail/receiveDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}, {
+					"path": "delivereDetail/delivereDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}, {
+					"path": "raiseDetail/raiseDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}, 
+				{
+					"path": "RefundDetails",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				},
+				{
+					"path": "voucherDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/Other",
+			"pages":[
+				{
+					"path": "Categories/Categories",
+					"style": {
+						"navigationBarTitleText": "分类管理"
+					}
+				}, {
+					"path": "activeMangent/activeMangent",
+					"style": {
+						"navigationBarTitleText": "活动管理"
+					}
+				}, {
+					"path": "AssessCenter/AssessCenter",
+					"style": {
+						"navigationBarTitleText": "评价中心"
+					}
+				}, {
+					"path": "GoodsMangent/GoodsMangent",
+					"style": {
+						"navigationBarTitleText": "商品管理"
+					}
+				},
+				{
+					"path": "GoodsMangent/AddGoods",
+					"style": {
+						"navigationBarTitleText": "添加商品"
+					}
+				}, {
+					"path": "OrderCheck/OrderCheck",
+					"style": {
+						"navigationBarTitleText": "订单对账"
+					}
+				},
+				{
+					"path": "OrderCheck/cardInfo",
+					"style": {
+						"navigationBarTitleText": "银行卡信息"
+					}
+				},
+				{
+					"path": "OrderCheck/cash",
+					"style": {
+						"navigationBarTitleText": "提现"
+					}
+				},
+				{
+					"path": "OrderCheck/billingRecords",
+					"style": {
+						"navigationBarTitleText": "账单记录"
+					}
+				}
+				,{
+				    "path" : "person/about",
+				    "style" : {
+						"navigationBarTitleText": "关于我们"
+					}
+				}
+				,{
+				    "path" : "person/Announcement",
+				    "style" : {
+						"navigationBarTitleText": "公告发布"
+					}
+				}
+				,{
+				    "path" : "person/baseInfo",
+				    "style" : {
+						"navigationBarTitleText": "基本信息"
+					}
+				}
+				,{
+				    "path" : "person/BusinessAuth",
+				    "style" : {
+						"navigationBarTitleText": "商家认证"
+					}
+				}
+				,{
+				    "path" : "person/mustKnow",
+				    "style" : {
+						"navigationBarTitleText": "商家须知"
+					}
+				}
+			]
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#666666",
+		"selectedColor": "#FFAC68",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/TabBar/Order/Order",
+				"iconPath": "static/img/tabar1.png",
+				"selectedIconPath": "static/img/tabar1act.png",
+				"text": "订单"
+			},
+			{
+				"pagePath": "pages/TabBar/complepage/complepage",
+				"iconPath": "static/img/tabar2.png",
+				"selectedIconPath": "static/img/tabar2act.png",
+				"text": "已完成"
+			},
+			{
+				"pagePath": "pages/TabBar/ShopManagement/ShopManagement",
+				"iconPath": "static/img/tabar3.png",
+				"selectedIconPath": "static/img/tabar3act.png",
+				"text": "店铺管理"
+			},
+			{
+				"pagePath": "pages/TabBar/Mine/Mine",
+				"iconPath": "static/img/tabar4.png",
+				"selectedIconPath": "static/img/tabar4act.png",
+				"text": "我的"
+			}
+
+
+		]
+	}
+}
