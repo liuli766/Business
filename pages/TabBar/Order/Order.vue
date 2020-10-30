@@ -16,14 +16,16 @@
 						<view class="component">
 							<!-- 催单 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===3' @tap="GoreminDetail">
+								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===3'
+								:productitem='list'
+								 @tap="GoreminDetail">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
+										<text class="color333 font28">订单编号：{{list.bianhao}}</text>
 										<text class="colorfac font28">催单中</text>
 									</view>
 									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
 										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+											￥<text class="font36">{{list.total}}</text>
 										</view>
 										<view class="handbtn font32 colorfff text_cen">处理</view>
 									</view>
@@ -31,7 +33,9 @@
 							</view>
 							<!-- 待接单 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===0' @tap="GoreceiveDetail">
+								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===0' 
+								:productitem='list'
+								@tap="GoreceiveDetail(list)">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
 										<text class="color333 font28">订单编号：D20200921152114</text>
 										<text class="colorfac font28">待接单</text>
@@ -50,7 +54,9 @@
 							</view>
 							<!-- 待配送 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===1' @tap="GodeliveDetail">
+								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===1' 
+								:productitem='list'
+								@tap="GodeliveDetail">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
 										<text class="color333 font28">订单编号：D20200921152114</text>
 										<text class="colorfac font28">待配送</text>
@@ -65,7 +71,9 @@
 							</view>
 							<!-- 待自提 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===2' @tap="GoraiseDetail">
+								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===2' 
+								:productitem='list'
+								@tap="GoraiseDetail">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
 										<text class="color333 font28">订单编号：D20200921152114</text>
 										<text class="colorfac font28">待自提</text>
@@ -80,7 +88,9 @@
 							</view>
 							<!-- 退款 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===4' @tap="GoRefundDetails">
+								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===4' 
+								:productitem='list'
+								@tap="GoRefundDetails">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
 										<text class="color333 font28">订单编号：D20200921152114</text>
 										<text class="colorfac font28">退款中</text>
@@ -95,7 +105,9 @@
 							</view>
 							<!-- 预订单 -->
 							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===5' @tap="GovoucherDetail">
+								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===5' 
+								:productitem='list'
+								@tap="GovoucherDetail">
 									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
 										<text class="color333 font28">订单编号：D20200921152114</text>
 										<text class="colorfac font28">待配送</text>
@@ -109,7 +121,6 @@
 								</listitem>
 							</view>
 						</view>
-
 					</block>
 				</scroll-view>
 			</swiper-item>
@@ -188,6 +199,28 @@
 				scrollInto: '',
 				indicatorLineLeft: 64,
 				isTap: false,
+				jDlist:[
+					{
+						bianhao:'D20200921152114',
+						name:'单人试吃套餐二',
+						name1:'百事可乐(冰)',
+						num:1,
+						img:require('../../../static/img/pltu.png'),
+						price:28,
+						dbfei:5,
+						total:31
+					},
+					{
+						bianhao:'D20200921152114',
+						name:'单人试吃套餐san',
+						name1:'百事可乐(冰)',
+						num:1,
+						img:require('../../../static/img/pltu.png'),
+						price:28,
+						dbfei:5,
+						total:31
+					}
+				]
 			}
 		},
 		methods: {
@@ -217,9 +250,9 @@
 					url: '../../Detail/reminDetail/reminDetail'
 				});
 			},
-			GoreceiveDetail() {
+			GoreceiveDetail(item) {
 				uni.navigateTo({
-					url: '../../Detail/receiveDetail/receiveDetail'
+					url: '../../Detail/receiveDetail/receiveDetail?item='+encodeURIComponent(JSON.stringify(item))
 				});
 			},
 			GodeliveDetail() {

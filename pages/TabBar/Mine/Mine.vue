@@ -14,11 +14,11 @@
 				<view class="iconfont icon-you"></view>
 			</view>
 			<view class="mb30 mt30">
-				<view class="flex flex_be list-item line" @tap="GoAccountSet">
+				<view class="flex flex_be list-item line" @tap="Gousersetting">
 					<text class="color3434 font500 font30">账户设置</text>
 					<text class="iconfont icon-you"></text>
 				</view>
-				<view class="flex flex_be list-item line" @tap="GorealName">
+				<view class="flex flex_be list-item line">
 					<text class="color3434 font500 font30">自动接单</text>
 					<switch checked @change="switch1Change" color='#5D82FF' style="transform:scale(0.8)" />
 				</view>
@@ -64,14 +64,10 @@
 					url:'../../Other/person/mustKnow'
 				})
 			},
-			GoAccountSet() {
-
-			},
-			GohandBook() {
-
-			},
-			GorealName() {
-
+			Gousersetting(){
+				uni.navigateTo({
+					url:'../../Other/person/usersetting'
+				})
 			}
 		}
 	}

@@ -151,6 +151,18 @@
 				    "style" : {
 						"navigationBarTitleText": "商家须知"
 					}
+				},
+				{
+				    "path" : "OrderCheck/historyOrder",
+				    "style" : {
+						"navigationBarTitleText": "历史订单"
+					}
+				},
+				{
+				    "path" : "person/usersetting",
+				    "style" : {
+						"navigationBarTitleText": "账户设置"
+					}
 				}
 			]
 		}

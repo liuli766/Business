@@ -5,17 +5,17 @@
 			<view class="flex">
 				<image src="../../static/img/tabar4act.png" mode="" class="order-img"></image>
 				<view class="flex flex-col">
-					<text class="font28 font500 color333 lh">单人试吃套餐二</text>
-					<text class="font26 font500 color999 lh mar19">百事可乐(冰)</text>
-					<text class="font26 font500 color999 lh">x1</text>
+					<text class="font28 font500 color333 lh">{{productitem.name}}</text>
+					<text class="font26 font500 color999 lh mar19">{{productitem.name1}}</text>
+					<text class="font26 font500 color999 lh">x{{productitem.num}}</text>
 				</view>
 			</view>
-			<text class="font500 font28 color333">￥26</text>
+			<text class="font500 font28 color333">￥{{productitem.price}}</text>
 		</view>
 		<view class="order-price">
 			<view class="flex flex_be ">
 				<text class="font500 font28 color333">打包费</text>
-				<text class="font500 font28 color333">￥5</text>
+				<text class="font500 font28 color333">￥{{productitem.dbfei}}</text>
 			</view>
 			<slot name="deliver"></slot>
 		</view>
@@ -29,13 +29,16 @@
 	} from 'vuex';
 	export default {
 		props: {
-
+			productitem: {
+				type: Object,
+				default: function() {
+					return {}
+				}
+			},
 		},
-		// computed: {
-		//     ...mapState({
-		// 		isPop: (state) => state.isPop,
-		// 	}),
-		// },
+		created() {
+			console.log(this.productitem, '11111')
+		},
 		data() {
 			return {
 

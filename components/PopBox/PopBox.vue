@@ -41,6 +41,7 @@
 		left: 0;
 		z-index: 100;
 		overflow: hidden;
+		transition: all .2s;
 		.popup{
 			position: absolute;
 			top: 50%;

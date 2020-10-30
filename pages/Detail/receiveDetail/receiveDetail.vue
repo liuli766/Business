@@ -55,6 +55,7 @@
 				<view class="color999 font500 font26">拒绝后订单将被退回</view>
 			</view>
 		</refusepop>
+		<concatpop v-if="isRefusePop"></concatpop>
 	</view>
 </template>
 
@@ -63,6 +64,7 @@
 	import orderinfo from '@/components/orderInfo/orderInfo.vue'
 	import Pop from '@/components/PopBox/PopBox.vue'
 	import refusepop from '@/components/refusePop/refusePop.vue'
+	import concatpop from '@/components/ConcatPop/ConcatPop.vue'
 	import {
 		mapState,
 	} from 'vuex';
@@ -71,17 +73,23 @@
 			listitem,
 			orderinfo,
 			Pop,
-			refusepop
+			refusepop,
+			concatpop
 		},
 		data() {
 			return {
 
 			}
 		},
+		onLoad(option) {
+			const item = JSON.parse(decodeURIComponent(option.item));
+			console.log(item)
+		},
 		computed: {
 			...mapState({
 				isPop: (state) => state.isPop,
-				isConcatPop: (state) => state.isConcatPop
+				isConcatPop: (state) => state.isConcatPop,
+				isRefusePop:(state) => state.isRefusePop,
 			}),
 		},
 		methods: {
