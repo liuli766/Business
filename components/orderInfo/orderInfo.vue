@@ -6,13 +6,13 @@
 				<view class="flex flex_be">
 					<text class="color333">收货地址</text>
 					<view class="flex flex-col color666">
-						<text>观音桥银泰新苑7栋5-3</text>
-						<text style="margin-top: 11upx;">王女士(130****0000)</text>
+						<text>{{orderinfo.address}}</text>
+						<text style="margin-top: 11upx;">{{orderinfo.user_name}}</text>
 					</view>
 				</view>
 				<view class="flex flex_be info-fuwu">
 					<text class="color333">配送服务</text>
-					<text class="color666">饿了么</text>
+					<text class="color666">{{orderinfo.delivery_type}}</text>
 				</view>
 			</view>
 		</view>
@@ -22,11 +22,23 @@
 			</view>
 			<view class="flex flex_be info-addr font28 font500">
 				<text class="color333">订单编号</text>
-				<text class="color666">FKMW202009171838</text>
+				<text class="color666">{{orderinfo.order_sn}}</text>
 			</view>
 			<view class="flex flex_be info-addr font28 font500">
-				<text class="color333">订单编号</text>
-				<text class="color666">FKMW202009171838</text>
+				<text class="color333">下单时间</text>
+				<text class="color666">{{orderinfo.pay_time}}</text>
+			</view>
+			<view class="flex flex_be info-addr font28 font500">
+				<text class="color333">预计送达时间</text>
+				<text class="color666">{{orderinfo.delivery_time}}</text>
+			</view>
+			<view class="flex flex_be info-addr font28 font500">
+				<text class="color333">支付方式</text>
+				<text class="color666">{{orderinfo.pay_type}}</text>
+			</view>
+			<view class="flex flex_be info-addr font28 font500">
+				<text class="color333">骑手接单</text>
+				<text class="color666">{{orderinfo.postman_mobile}}</text>
 			</view>
 		</view>
 		<slot name="detailbtn"></slot>
@@ -35,6 +47,14 @@
 
 <script>
 	export default {
+		props:{
+			orderinfo:{
+				type:[Object,Array],
+				default: function() {
+					return {}
+				}
+			}
+		},
 		data() {
 			return {
 

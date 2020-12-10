@@ -1,14 +1,21 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/TabBar/Order/Order",
 			"style": {
-				"navigationBarTitleText": "外卖订单"
+				"navigationBarTitleText": "外卖订单",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/TabBar/complepage/complepage",
 			"style": {
-			"navigationBarTitleText": "发单列表"
+				"navigationBarTitleText": "发单列表"
 			}
 		}, {
 			"path": "pages/TabBar/ShopManagement/ShopManagement",
@@ -21,24 +28,17 @@
 				"navigationBarTitleText": "个人中心"
 			}
 		}
-        ,{
-            "path" : "pages/login/login",
-            "style" : {
-				"navigationStyle": "custom"
-			}
-        }
-    ],
-	"subPackages":[
-		{
+
+	],
+	"subPackages": [{
 			"root": "pages/Detail",
-			"pages": [
-				{
+			"pages": [{
 					"path": "reminDetail/reminDetail",
 					"style": {
 						"navigationBarTitleText": "订单详情"
 					}
 				}
-				
+
 				, {
 					"path": "receiveDetail/receiveDetail",
 					"style": {
@@ -54,15 +54,9 @@
 					"style": {
 						"navigationBarTitleText": "订单详情"
 					}
-				}, 
-				{
-					"path": "RefundDetails",
-					"style": {
-						"navigationBarTitleText": "订单详情"
-					}
 				},
 				{
-					"path": "voucherDetail",
+					"path": "RefundDetails",
 					"style": {
 						"navigationBarTitleText": "订单详情"
 					}
@@ -70,9 +64,19 @@
 			]
 		},
 		{
-			"root": "pages/Other",
-			"pages":[
+			"root": "pages/login",
+			"pages": [
 				{
+					"path": "login",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/Other",
+			"pages": [{
 					"path": "Categories/Categories",
 					"style": {
 						"navigationBarTitleText": "分类管理"
@@ -90,7 +94,8 @@
 				}, {
 					"path": "GoodsMangent/GoodsMangent",
 					"style": {
-						"navigationBarTitleText": "商品管理"
+						"navigationBarTitleText": "商品管理",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -121,47 +126,48 @@
 					"style": {
 						"navigationBarTitleText": "账单记录"
 					}
-				}
-				,{
-				    "path" : "person/about",
-				    "style" : {
+				}, {
+					"path": "person/about",
+					"style": {
 						"navigationBarTitleText": "关于我们"
 					}
-				}
-				,{
-				    "path" : "person/Announcement",
-				    "style" : {
+				}, {
+					"path": "person/Announcement",
+					"style": {
 						"navigationBarTitleText": "公告发布"
 					}
-				}
-				,{
-				    "path" : "person/baseInfo",
-				    "style" : {
+				}, {
+					"path": "person/baseInfo",
+					"style": {
 						"navigationBarTitleText": "基本信息"
 					}
-				}
-				,{
-				    "path" : "person/BusinessAuth",
-				    "style" : {
-						"navigationBarTitleText": "商家认证"
+				}, {
+					"path": "person/BusinessAuth",
+					"style": {
+						"navigationStyle": "custom"
 					}
-				}
-				,{
-				    "path" : "person/mustKnow",
-				    "style" : {
+				}, {
+					"path": "person/mustKnow",
+					"style": {
 						"navigationBarTitleText": "商家须知"
 					}
 				},
 				{
-				    "path" : "OrderCheck/historyOrder",
-				    "style" : {
+					"path": "OrderCheck/historyOrder",
+					"style": {
 						"navigationBarTitleText": "历史订单"
 					}
 				},
 				{
-				    "path" : "person/usersetting",
-				    "style" : {
-						"navigationBarTitleText": "账户设置"
+					"path": "person/usersetting",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "person/addNews",
+					"style": {
+						"navigationBarTitleText": "发布公告"
 					}
 				}
 			]

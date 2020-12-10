@@ -66,6 +66,9 @@
 .color65{
 	color: #656565;
 }
+.colorfac{
+	color: #FFAC68;
+}
 .bold{
 	font-weight: bold;
 }
@@ -129,9 +132,6 @@ view,text{
 .comm{
 	background-color: #F7F9FA;
 	height: 100%;
-	position: fixed;
-	width: 100%;
-	overflow: auto;
 }
 .poptitle{
 		margin: 60upx 0 38upx 0;
@@ -163,7 +163,7 @@ view,text{
 		.number {
 			width: 48upx;
 			line-height: 48upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			border-radius: 5upx;
 		}
 	
@@ -200,13 +200,14 @@ view,text{
 	.inp {
 		width: 500upx;
 		height: 80upx;
-		border: 1upx solid #DEDEDE;
+		border: 1px solid #DEDEDE;
 		border-radius: 10upx;
 		margin: 40upx 30upx 30upx 30upx;
 		font-size: 26upx;
 		padding-left: 40upx;
 		box-sizing: border-box;
 	}
+	
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
 $uni-color-success: #4cd964;

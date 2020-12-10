@@ -4,31 +4,31 @@
 			<view class="font32 color333 bold cash-title">提现金额</view>
 			<view class="flex flex_al-cen yuan">
 				<text class="font500 font28 color333">￥</text>
-				<input type="text" class="font30" />
+				<input type="text" class="font30":value="money" :focus='true' @input="Money" />
 			</view>
 			<view class="flex flex_be all-cash  font24">
-				<text class="color999">当前可提现金额128.5元</text>
-				<text class="all-cash-price">全部提现</text>
+				<text class="color999">当前可提现金额{{user_money}}元</text>
+				<text class="all-cash-price" @tap="Allcash">全部提现</text>
 			</view>
 		</view>
-		<view class="btn font32 font500 colorfff text_cen">立即提现</view>
+		<view class="btn font32 font500 colorfff text_cen" @tap="getUserCash">立即提现</view>
 		<view class="color333 font500 font32 cash-rule">提现规则</view>
 		<view class="popbox" v-if="isPop">
 			<view class="popup text_cen">
 				<view class="pop">
 					<view class="popbot">
 						<image src="../../../static/img/succss.png" class="success"></image>
-						<view class="color3434 bold font36 successtxt">提现成功</view>
-						<view class="color9a9a font500 font26">提现后24小时内到账</view>
+						<view class="color3434 bold font36 successtxt">提现申请成功</view>
+						<view class="color9a9a font500 font26">提现后等待审核到账</view>
 					</view>
 					<view class="cash-card">
 						<view class="font28 font500 flex flex_be cash-user">
 							<text class="color333">收款账户</text>
-							<text class="color666">工商银行(2016)</text>
+							<text class="color666">{{}}</text>
 						</view>
 						<view class="font28 font500 flex flex_be">
 							<text class="color333">提现金额</text>
-							<text class="color666">2500.00元</text>
+							<text class="color666">{{money}}元</text>
 						</view>
 					</view>
 				</view>
@@ -40,14 +40,86 @@
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	export default {
 		data() {
 			return {
-				isPop:false
+				isPop: false, //提现成功显示框
+				money: "", //提现金额
+				user_money: "", //可提现全部金额
 			}
 		},
+		computed: {
+			...mapState({
+				supplier_id: (state) => state.supplier_id, //商户id
+			}),
+		},
+		onLoad(option) {
+			this.user_money = option.supplier_money
+		},
 		methods: {
+			getUserCash() { //立即提现
+				let that = this
+				let params = {
+					supplier_id: this.supplier_id,
+				}
+				that.request.getdata('getbankInfo', params).then(res => {//检测银行卡信息
+					console.log(res, '检测银行卡')
+					if (res.code == 300) {
+						setTimeout(function(){
+							uni.navigateTo({
+								url: './cardInfo'
+							})
+						}, 2000);
+						return false;
+					} else {
+						if (this.money == "" || this.money <= 0) {
+							uni.showToast({
+								title: '请输入提现金额',
+								icon: 'none',
+								duration: 2000
+							});
+							return false;
+						}
+						let that = this
+						let params = {
+							user_id: this.userId,
+							money: this.money
+						}
+						that.request.getdata('getsupplierCash', params).then(res => {
+							
+							if(res.code==300){
+								uni.navigateTo({
+									url:'./cardInfo'
+								})
+								return false;
+							}
+							console.log(res, '提现')
+							this.isPop = true
+						})
+					}
+				})
 			
+			},
+			Allcash() { //全部提现
+				this.money = this.user_money
+				if(this.user_money==''){
+					uni.showToast({
+						title: '没有可提现的金额',
+						icon: 'none',
+						duration: 2000
+					});
+				}
+			},
+			Close() { //关闭提现成功弹框
+				this.isPop = false
+			},
+			Money(e) {
+				let val = e.detail.value
+				this.money = val
+			}
 		}
 	}
 </script>

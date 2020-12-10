@@ -20,9 +20,16 @@
 				
 			}
 		},
+		props:{
+			phone:{
+				type:String,
+				default:""
+			}
+		},
 		computed: {
 		    ...mapState({
-				isRefusePop:(state) => state.isRefusePop
+				isRefusePop:(state) => state.isRefusePop,
+				Tel:(state) => state.Tel,
 			}),
 		},
 		methods: {
@@ -30,7 +37,13 @@
 				this.$store.commit("showRefuse", false);
 			},
 			handCall(){
-				console.log(1)
+				if(this.phone==1){
+					wx.makePhoneCall({
+						phoneNumber: this.Tel
+					})
+					this.$store.commit("showRefuse", false);
+				}
+				
 			}
 		}
 	}

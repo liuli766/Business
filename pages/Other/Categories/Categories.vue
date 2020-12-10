@@ -13,24 +13,25 @@
 				<view>分类名称</view>
 				<view class="text_cen">操作</view>
 			</view>
-			<view class="flex flex_be class-box-item" v-for="(item,i) in 3" :key="i">
-				<view class="number text_cen">1</view>
-				<view>分类一</view>
+			<view class="flex flex_be class-box-item" v-for="(item,i) in CateList" :key="i">
+				<view class="number text_cen">{{item.id}}</view>
+				<view>{{item.cat_name}}</view>
 				<view class="font24 colorfff text_cen flex">
-					<view class="modify" @tap="updateClass">修改</view>
-					<view class="delete" @tap="handDelete">删除</view>
+					<view class="modify" @tap="updateClass(item)">修改</view>
+					<view class="delete" @tap="handDelete(item)">删除</view>
 				</view>
 			</view>
 		</view>
-		<plug-pop v-if="ispulgPop">
+		<plug-pop v-if="ispulgPop" :cattype='type'>
 			<view class="poptitle bold color333 font36" slot="fenlei">{{fiction}}</view>
 			<view slot='comminp'>
-				<input class="inp" placeholder="填写序号" placeholder-style='color:#999;font-size:26upx;text-align: left;' />
-				<input class="inp" placeholder="填写分类名称" placeholder-style='color:#999;font-size:26upx; text-align: left;' />
-				<input class="inp" placeholder="填写规格类别，以英文逗号隔开" placeholder-style='color:#999;font-size:26upx; text-align: left;' />
+				<!-- <input class="inp" placeholder="填写序号"  placeholder-style='color:#999;font-size:26upx;text-align: left;' @focus="GetVal("")" /> -->
+				<input class="inp" placeholder="填写分类名称" placeholder-style='color:#999;font-size:26upx; text-align: left;' v-model="addcat.cat_name" />
+				<input class="inp" placeholder="实例： 规格,甜度,小料" placeholder-style='color:#999;font-size:26upx; text-align: left;'
+				 v-model="addcat.attr" />
 			</view>
 		</plug-pop>
-		<refusepop v-if="isConcatPop">
+		<refusepop v-if="isConcatPop" :deleteType='delettype' >
 			<view slot="poptitle">
 				<view class="poptitle bold color333 font36">确认删除</view>
 				<view class="color999 font500 font26">删除之后将不可恢复</view>
@@ -52,28 +53,69 @@
 		},
 		data() {
 			return {
-				fiction: ''
+				fiction: "",
+				CateList: [], //分类列表
+				attr: "",
+				type: "",//1为添加分类，2为修改分类
+				delettype:"",
+				deleteId:''
 			}
 		},
 		computed: {
 			...mapState({
 				ispulgPop: (state) => state.ispulgPop,
-				isConcatPop: (state) => state.isConcatPop
+				isConcatPop: (state) => state.isConcatPop,
+				supplier_id: (state) => state.supplier_id, //商户id
+				addcat: (state) => state.addcat,
 			}),
 		},
-
+		onShow() {
+			this.CateList=[]
+			this.getSupplier()
+		},
 		methods: {
-			addClass() {
+			addClass() { //添加分类
 				this.fiction = '添加分类'
 				this.$store.commit("showPlugPop", true);
+				this.type = 1
 			},
-			handDelete() {
+			handDelete(item) { //删除商品
+				this.delettype=2
 				this.$store.commit("showConcatPop", true);
+				console.log(item)
+				this.deleteId=item.id
 			},
-			updateClass() {
+			updateClass(item) { //修改分类
 				this.fiction = "修改分类"
 				this.$store.commit("showPlugPop", true);
+				this.type = 2
+				let that = this;
+				let params = {
+					cat_id: item.id,
+				}
+				that.request.getdata('getCatInfo', params).then(res => {
+					let attr = res.data.attr;
+					console.log(attr, '分类详情')
+					this.$store.commit("AddCate", {
+						cat_name: item.cat_name,
+						attr: attr,
+						cat_id:item.id
+					})
+					that.getSupplier();
+				})
+				
+			},
+			getSupplier() {
+				let that = this;
+				let params = {
+					supplier_id: this.supplier_id,
+				}
+				that.request.getdata('getSupplierCateList', params).then(res => {
+					this.CateList = res.data
+					console.log(res, '分类列表')
+				})
 			}
+
 		}
 	}
 </script>
@@ -95,7 +137,7 @@
 		.number {
 			width: 48upx;
 			line-height: 48upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			border-radius: 5upx;
 		}
 

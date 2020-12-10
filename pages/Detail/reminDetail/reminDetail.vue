@@ -94,7 +94,7 @@
 		.concatcustomers {
 			width: 300upx;
 			height: 80upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			box-shadow: 0px 5upx 20upx 0px rgba(209, 108, 77, 0.2);
 			border-radius: 10upx;
 		}

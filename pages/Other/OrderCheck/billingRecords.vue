@@ -11,15 +11,15 @@
 				<view class="font26 color666">指定年份查看账单</view>
 				<view class="font28 color333">{{newyear}}年</view>
 			</view>
-			<view class="billings-list flex_be flex">
+			<view class="billings-list flex_be flex" v-for="(item,i) in yeardata.dataList" :key='i'>
 				<view class="flex flex-col">
-					<text class="color333 font30">订单配送：瑞幸咖啡</text>
-					<text class="color999 font24 billing-time">2020-09-18</text>
+					<text class="color333 font30">{{item.matter}}</text>
+					<text class="color999 font24 billing-time">{{item.add_time}}</text>
 				</view>
-				<view class="billing-price font28"><text>+</text>￥8.00</view>
+				<view class="billing-price font28"><text>+</text>￥{{item.money}}</view>
 			</view>
 			<view class="font28 color666 mt30 mb30 billing-bot">
-				累计收入：<text class="billing-total-price font36">478.50</text>元
+				累计收入：<text class="billing-total-price font36">{{yeardata.total_money}}</text>元
 			</view>
 		</view>
 		<view class="font500" v-if="navIndex===1">
@@ -27,15 +27,15 @@
 				<view class="font26 color666">指定月份查看账单</view>
 				<view class="font28 color333">{{newyear}}年{{newmonth}}月</view>
 			</view>
-			<view class="billings-list flex_be flex">
+			<view class="billings-list flex_be flex" v-for="(item,i) in mouthdata.dataList" :key='i'>
 				<view class="flex flex-col">
-					<text class="color333 font30">订单配送：瑞幸咖啡</text>
-					<text class="color999 font24 billing-time">2020-09-18</text>
+					<text class="color333 font30">{{item.matter}}</text>
+					<text class="color999 font24 billing-time">{{item.add_time}}</text>
 				</view>
-				<view class="billing-price font28"><text>+</text>￥8.00</view>
+				<view class="billing-price font28"><text>+</text>￥{{item.money}}</view>
 			</view>
 			<view class="font28 color666 mt30 mb30 billing-bot">
-				累计收入：<text class="billing-total-price font36">478.50</text>元
+				累计收入：<text class="billing-total-price font36">{{mouthdata.total_money}}</text>元
 			</view>
 		</view>
 		<view class="font500" v-if="navIndex===2">
@@ -43,15 +43,15 @@
 				<view class="font26 color666">指定某天查看账单</view>
 				<view class="font28 color333">{{newyear}}年{{newmonth}}月{{newday}}日</view>
 			</view>
-			<view class="billings-list flex_be flex">
+			<view class="billings-list flex_be flex" v-for="(item,i) in daydata.dataList" :key='i'>
 				<view class="flex flex-col">
-					<text class="color333 font30">订单配送：瑞幸咖啡</text>
-					<text class="color999 font24 billing-time">2020-09-18</text>
+					<text class="color333 font30">{{item.matter}}</text>
+					<text class="color999 font24 billing-time">{{item.add_time}}</text>
 				</view>
-				<view class="billing-price font28"><text>+</text>￥8.00</view>
+				<view class="billing-price font28"><text>+</text>￥{{item.money}}</view>
 			</view>
 			<view class="font28 color666 mt30 mb30 billing-bot">
-				累计收入：<text class="billing-total-price font36">478.50</text>元
+				累计收入：<text class="billing-total-price font36">{{daydata.total_money}}</text>元
 			</view>
 		</view>
 		<!-- 年份选择 -->
@@ -104,7 +104,7 @@
 			<view class="pop">
 				<view class="uni-list">
 					<view class="year_tit font36 color333 text_cen bold">
-						月份选择
+						日份选择
 					</view>
 					<view class="text_cen">
 						<picker-view v-if="visible" :indicator-style="indicatorStyle" :value="value" @change="bindChangeday" style="height: 355rpx;">
@@ -126,11 +126,19 @@
 				</view>
 			</view>
 		</view>
+		<uni-load-more :loadingType="loadingType" />
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
+	import UniLoadMore from "@/components/uni-load-more.vue"
 	export default {
+		components: {
+			UniLoadMore,
+		},
 		data() {
 			const date = new Date()
 			const years = []
@@ -166,12 +174,35 @@
 				newyear: year,
 				newmonth: month,
 				isPopMonth: false,
-				isPopDay:false,
-				newday:day,
+				isPopDay: false,
+				newday: day,
+				pages: 1,
+				yeardata: [],
+				mouthdata: [],
+				daydata: [],
+				loadingType:"",
 			}
 		},
 		computed: {
-
+			...mapState({
+				supplier_id: (state) => state.supplier_id, //商户id
+			})
+		},
+		
+		onLoad() {
+			this.yeardata = [];
+			this.mouthdata = [];
+			this.daydata = [];
+			this.surePopYear();
+			this.surePopMouth();
+			this.surePopDay();
+		},
+		// 上拉加载
+		onReachBottom() {
+			this.pages++;
+			this.surePopYear();
+			this.surePopMouth();
+			this.surePopDay();
 		},
 		methods: {
 			handNavSweich(i, e) {
@@ -179,6 +210,19 @@
 				var offsetX = e.currentTarget.offsetLeft
 				var pageX = e.detail.x
 				this.indicatorLineLeft = offsetX + pageX
+				if (i == 0) {
+					this.pages=1;
+					this.yeardata = [];
+					this.surePopYear();
+				} else if (i == 1) {
+					this.pages=1;
+					this.mouthdata = [];
+					this.surePopMouth();
+				} else if (i == 2) {
+					this.pages=1;
+					this.daydata = [];
+					this.surePopDay();
+				}
 			},
 			popYear() {
 				this.isPopYear = true
@@ -186,8 +230,32 @@
 			closePopYear() {
 				this.isPopYear = false
 			},
-			surePopYear() {
+			surePopYear() { //年份确认
 				this.newyear = this.year
+				let that = this;
+				let params = {
+					supplier_id: that.supplier_id,
+					page: that.pages,
+					type: 1, //1=年 2=月 3=日
+					time: this.newyear
+				}
+				that.request.getdata('getmoneyRecord', params).then(res => {
+					console.log(res, '年分账单')
+					if (that.yeardata.length < 1) {
+						that.yeardata = res.data
+					} else {
+						res.data.dataList.map((news) => {
+							that.yeardata.push(news);
+						});
+					}
+					if (that.yeardata.dataList.length == res.data.total) {
+						that.loadingType = 2;
+					} else {
+						that.loadingType = 0;
+					}
+				})
+				this.pages=1
+				this.yeardata=[]
 				this.isPopYear = false
 			},
 			popMonth() {
@@ -196,21 +264,68 @@
 			closePopMouth() {
 				this.isPopMonth = false
 			},
-			surePopMouth() {
+			surePopMouth() { //月份账单
 				this.newyear = this.year
 				this.newmonth = this.month
+				this.newmonth = this.newmonth ? this.newmonth : new Date().getMonth() + 1
+				let that = this;
+				let params = {
+					supplier_id: that.supplier_id,
+					page: that.pages,
+					type: 2, //1=年 2=月 3=日
+					time: `${this.newyear}-${this.newmonth}`
+				}
+				that.request.getdata('getmoneyRecord', params).then(res => {
+					console.log(res, '月分账单')
+					if (that.mouthdata.length < 1) {
+						that.mouthdata = res.data
+					} else {
+						res.data.dataList.map((news) => {
+							that.mouthdata.push(news);
+						});
+					}
+					if (that.mouthdata.dataList.length == res.data.total) {
+						that.loadingType = 2;
+					} else {
+						that.loadingType = 0;
+					}
+				})
 				this.isPopMonth = false
 			},
-			popDay(){
+			popDay() {
 				this.isPopDay = true
 			},
-			closePopDay(){
+			closePopDay() {
 				this.isPopDay = false
 			},
-			surePopDay(){
+			surePopDay() { //日分账单
 				this.newyear = this.year
 				this.newmonth = this.month
 				this.newday = this.day
+				this.newmonth = this.newmonth ? this.newmonth : new Date().getMonth() + 1
+				this.newday = this.newday ? this.newday : new Date().getDate()
+				let that = this;
+				let params = {
+					supplier_id: that.supplier_id,
+					page: that.pages,
+					type: 3, //1=年 2=月 3=日
+					time: `${this.newyear}-${this.newmonth}-${this.newday}`
+				}
+				that.request.getdata('getmoneyRecord', params).then(res => {
+					console.log(res, '日分账单')
+					if (that.daydata.length < 1) {
+						that.daydata = res.data
+					} else {
+						res.data.dataList.map((news) => {
+							that.daydata.push(news);
+						});
+					}
+					if (that.daydata.dataList.length == res.data.total) {
+						that.loadingType = 2;
+					} else {
+						that.loadingType = 0;
+					}
+				})
 				this.isPopDay = false
 			},
 			bindChangeday: function(e) {
@@ -325,7 +440,7 @@
 			.cancel {
 				width: 200upx;
 				line-height: 80upx;
-				border: 1upx solid #CCCCCC;
+				border: 1px solid #CCCCCC;
 				box-shadow: 0px 5upx 20upx 0px rgba(209, 108, 77, 0.2);
 				border-radius: 10upx;
 				margin: 0 20upx 0 30upx;

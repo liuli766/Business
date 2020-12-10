@@ -4,20 +4,20 @@
 		<view class="shop-title bold font36 colorfff">店铺管理</view>
 		<view class="shop-info">
 			<view class="flex">
-				<image src="../../../static/img/succss.png" class="shop-head" mode=""></image>
+				<image :src="SupplierInfo.supplier_logo" class="shop-head" mode=""></image>
 				<view>
 					<view class="flex flex_al-cen">
-						<text class="bold font36 colorfff">瑞幸咖啡(科技大学店)</text>
-						<view class="vip colorfff font28 text_cen">VIP</view>
+						<text class="bold font36 colorfff">{{SupplierInfo.supplier_name}}</text>
+						<!-- <view class="vip colorfff font28 text_cen">VIP</view> -->
 					</view>
 					<view class="flex shop-icon-addr colorfff font26">
 						<view class="flex flex_al-cen">
 							<image src="../../../static/img/shop-addr.png" class="icon"></image>
-							<text>长安区广安大街68号</text>
+							<text>{{SupplierInfo.address}}</text>
 						</view>
 						<view class="flex flex_al-cen" style="margin-left: 40upx;">
 							<image src="../../../static/img/shop-dianhua.png" class="icon"></image>
-							<text>13000000000</text>
+							<text>{{SupplierInfo.mobile}}</text>
 						</view>
 					</view>
 				</view>
@@ -32,7 +32,7 @@
 			<!--菜单管理  -->
 			<view>
 				<view class="bold color333 font36 meun-tit">菜单管理</view>
-				<view class="bfff flex shop-gird shop-gird2">
+				<view class="bfff flex shop-gird shop-gird2 flex_ar">
 					<view class="flex flex-col flex_al-cen flex_jus-cen " @tap="GoclassAdmin">
 						<image src="../../../static/img/dpfl.png" mode="" class="gird-img"></image>
 						<text>分类管理</text>
@@ -41,9 +41,9 @@
 						<image src="../../../static/img/dpgl.png" mode="" class="gird-img"></image>
 						<text>商品管理</text>
 					</view>
-					<view class="flex flex-col flex_al-cen flex_jus-cen ">
+					<view class="flex flex-col flex_al-cen flex_jus-cen " @tap="previewImg">
 						<image src="../../../static/img/dpsys.png" mode="" class="gird-img"></image>
-						<text>扫一扫</text>
+						<text>二维码</text>
 					</view>
 				</view>
 			</view>
@@ -66,12 +66,15 @@
 				</view>
 			</view>
 		</view>
+		<view class="previewimg" v-if="ispreviewimg" @tap="previewImgClose">
+			<image :src="'data:image/png;base64,'+supplierCode" ></image>
+		</view>
 		<!-- 营业时间弹窗 -->
 		<view class="time-pop" v-if="isvisible">
 			<view class="time-pop-box">
 				<view class="font36 bold color333 text_cen">营业时间</view>
 				<view style="position: relative;" @tap="handShowTime">
-					<input type="text" :value="suretime"   placeholder="选择营业时间" disabled class="font26" placeholder-style='color:#999;font-size:26upx'/>
+					<input type="text" :value="suretime" placeholder="选择营业时间" disabled class="font26" placeholder-style='color:#999;font-size:26upx' />
 					<view class="sanjiao"></view>
 				</view>
 				<view class="font32 font500 flex">
@@ -108,9 +111,9 @@
 						</picker-view-column>
 					</picker-view>
 				</view>
-				
+
 			</view>
-			
+
 		</view>
 		<!-- 配送合作弹窗 -->
 		<view class="time-pop" v-if="iscoopshow">
@@ -119,30 +122,15 @@
 				<view class="font28 radio-box">
 					<view class="flex">
 						<view style="margin-right: 19upx;">是否支持平台配送</view>
-						<view class="flex color666 mr">
-							<view class="radio"></view>
-							<view class="">支持</view>
-						</view>
-						<view class="flex color666">
-							<view class="radio"></view>
-							<view class="">不支持</view>
-						</view>
-					</view>
-					<view class="flex" style="margin-top: 32upx;">
-						<view style="margin-right: 19upx;">是否支持平台配送</view>
-						<view class="flex color666 mr">
-							<view class="radio"></view>
-							<view class="">支持</view>
-						</view>
-						<view class="flex color666">
-							<view class="radio"></view>
-							<view class="">不支持</view>
+						<view class="flex color666 mm"  v-for="(item,i) in arrSalt" :key='i' @tap="handSalt(i)">
+							<view class="radio" :class="{'active':i==saltid}"></view>
+							<view class="">{{item}}</view>
 						</view>
 					</view>
 				</view>
 				<view class="font32 font500 flex">
-					<view class="confirm color666 text_cen ml" @tap="handcancel">取消</view>
-					<view class="cancel colorfff text_cen" @tap="handconfirm">确认提交</view>
+					<view class="confirm color666 text_cen ml" @tap="handcancelcoopshow">取消</view>
+					<view class="cancel colorfff text_cen" @tap="Saltsure">确认提交</view>
 				</view>
 			</view>
 		</view>
@@ -150,6 +138,9 @@
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	export default {
 		data() {
 			const date = new Date()
@@ -157,13 +148,14 @@
 			const hour = date.getHours();
 			const minus = []
 			const minu = date.getMinutes();
-			for(let i = 0;i<date.getHours();i++){
+			for (let i = 0; i < 24; i++) {
 				hours.push(i)
 			}
-			for(let i = 0;i<date.getMinutes();i++){
+			for (let i = 0; i < 60; i++) {
 				minus.push(i)
 			}
 			return {
+				arrSalt:['不支持','支持'],
 				girdList: [{
 						title: '营业时间',
 						img: require('../../../static/img/dp1.png')
@@ -194,60 +186,154 @@
 				hour,
 				minus,
 				minu,
-				newbefortime:'',
-				newaftertime:'',
-				suretime:'',
-				value: [60, hour-1, minu-1],
+				newbefortime: "",
+				newaftertime: "",
+				// suretime: "",
+				value: [0, 0],
 				visible: true,
-				isvisible:false,//营业时间弹窗
-				isshowtime:false, //时间弹窗
+				isvisible: false, //营业时间弹窗
+				isshowtime: false, //时间弹窗
 				indicatorStyle: `height: ${Math.round(uni.getSystemInfoSync().screenWidth/(750/100))}px;`,
-				iscoopshow:false,
+				
+				iscoopshow: false,
+				SupplierInfo: {}, //个人信息
+				supplierCode: "",
+				ispreviewimg:false,
+				saltid:1
 			}
 		},
+		computed: {
+			...mapState({
+				supplier_id: (state) => state.supplier_id, //商户id
+			}),
+			suretime() {
+				if (this.newbefortime !== "" || this.newaftertime !== "") {
+					return this.newbefortime + '-' + this.newaftertime
+				}
+
+			}
+		},
+		onLoad() {
+			this.person();
+			this.supplierSalt();
+			let that = this;
+			let params = {
+				supplier_id: that.supplier_id,
+			}
+			that.request.getdata("getsupplierCode", params).then(res => {
+				console.log(res, 'base64二维码')
+				that.supplierCode = res.data
+			})
+			
+		},
 		methods: {
+			previewImg() { //图片预览
+				this.ispreviewimg=true
+			},
+			previewImgClose(){
+				this.ispreviewimg=false
+			},
 			bindChangeday: function(e) {
 				const val = e.detail.value
 				this.hour = this.hours[val[0]]
 				this.minu = this.minus[val[1]]
 				let hour = this.hours[val[0]]
 				let minu = this.minus[val[1]]
-				this.newbefortime = hour+':'+minu
+				this.newbefortime = hour + ':' + minu
 				console.log(this.newbefortime)
 			},
-			bindChangeday1(e){
+			bindChangeday1(e) {
 				const val = e.detail.value
 				this.hour = this.hours[val[0]]
 				this.minu = this.minus[val[1]]
 				let hour = this.hours[val[0]]
 				let minu = this.minus[val[1]]
-				this.newaftertime = hour+':'+minu
+				this.newaftertime = hour + ':' + minu
 				console.log(this.newaftertime)
 			},
-			handShowTime(){
-				this.isshowtime=true
+			handShowTime() {
+				this.isshowtime = true
 			},
-			handconfirm(){
-				if(!this.suretime){
+			handconfirm() { //设置营业时间
+				if (!this.suretime) {
 					uni.showToast({
 						title: '请选择时间',
 						icon: 'none',
-						duration:2000
+						duration: 2000
 					});
-				}else{
-					this.isvisible=false
+				} else {
+					let that = this;
+					let params = {
+						supplier_id: this.supplier_id,
+						start_time: this.newbefortime,
+						end_time: this.newaftertime
+					}
+					that.request.getdata('getsetDate', params).then(res => {
+						console.log(res)
+					})
+					this.isvisible = false;
+
 				}
 			},
-			handcancel(){
-				this.isvisible=false
+			Confirmtimepop() { //确定时间
+			
+				if (this.suretime.indexOf("-") == 0) {
+					// uni.showToast({
+					// 	title: '请选择时间',
+					// 	icon: 'none',
+					// 	duration: 2000
+					// });
+					this.newbefortime='0:0'
+					this.newaftertime='0:0'
+					return;
+				}
+				this.isshowtime = false
 			},
-			Canceltimepop(){
-				this.isshowtime=false
+			handcancel() { //取消设置时间弹框
+				this.isvisible = false
+				this.newbefortime="";
+				this.newaftertime=""
+				console.log(this.newbefortime,this.newaftertime,this.suretime)
+			},
+			Canceltimepop() {
+				this.isshowtime = false
+
+			},
+			handcancelcoopshow(){
+				this.iscoopshow=false
+			},
 				
+			person() { //店铺商家信息
+				let that = this
+				let params = {
+					supplier_id: this.supplier_id,
+				}
+				that.request.getdata('getSupplierInfo', params).then(res => {
+					console.log(res, '店铺个人信息')
+					this.SupplierInfo = res.info
+				})
 			},
-			Confirmtimepop(){
-					this.suretime = this.newbefortime+'-'+this.newaftertime
-					this.isshowtime=false			
+			handSalt(i){
+				this.saltid=i
+			},
+			supplierSalt(){
+				let params = {
+					supplier_id: this.supplier_id,
+				}
+				this.request.getdata('getsupplierSalt', params).then(res => {
+					console.log(res, '配送合作展示')
+					this.saltid=res.salet
+				})
+			},
+			Saltsure(){ //配送合作确认提交
+				let params = {
+					supplier_id: this.supplier_id,
+					salt:this.saltid
+				}
+				this.request.getdata('getsaveSalt', params).then(res => {
+					console.log(res, '配送合作')
+					this.iscoopshow=false
+				})
 			},
 			GoclassAdmin() {
 				uni.navigateTo({ //商品分类
@@ -259,35 +345,54 @@
 					url: '../../Other/GoodsMangent/GoodsMangent'
 				})
 			},
-			GoAnnouncement(){
+			GoAnnouncement() {
 				uni.navigateTo({ //发布公告
-					url:'../../Other/person/Announcement'
+					url: '../../Other/person/Announcement'
 				})
 			},
-			GobaseInfo(){ 
+			GobaseInfo() {
 				uni.navigateTo({
-					url:'../../Other/person/baseInfo'
+					url: '../../Other/person/baseInfo'
 				})
 			},
-			GoBusinessAuth(){
+			GoBusinessAuth() {
 				uni.navigateTo({
-					url:'../../Other/person/BusinessAuth'
+					url: '../../Other/person/BusinessAuth'
 				})
 			},
 			handGo(item, i) {
-				i == 1 && uni.navigateTo({ //活动管理
-					url: "../../Other/activeMangent/activeMangent"
-				})
-				i == 2 && uni.navigateTo({ //评价中心
-					url: '../../Other/AssessCenter/AssessCenter'
-				})
-				i == 4 && uni.navigateTo({ //订单对账
-					url: '../../Other/OrderCheck/OrderCheck'
-				})
-				i ==0 && (this.isvisible=true) //营业时间
-				i=5 && uni.navigateTo({ //历史订单
-					url:'../../Other/OrderCheck/historyOrder'
-				})
+				if (i == 0) {
+					this.isvisible = true
+					return;
+				}
+				if (i == 3) {
+					this.iscoopshow = true
+					return;
+				}
+				if(i==1){
+					uni.navigateTo({ //活动管理
+						url: "../../Other/activeMangent/activeMangent"
+					})
+					return;
+				}
+				if(i==2){
+					uni.navigateTo({ //评价中心
+						url: '../../Other/AssessCenter/AssessCenter'
+					})
+					return;
+				}
+				if(i==4){
+					uni.navigateTo({ //订单对账
+						url: '../../Other/OrderCheck/OrderCheck'
+					})
+					return;
+				}
+				if(i==5){
+					uni.navigateTo({ //历史订单
+						url: '../../Other/OrderCheck/historyOrder'
+					})
+					return;
+				}
 			}
 		}
 	}
@@ -373,7 +478,8 @@
 			}
 		}
 	}
-	.time-pop{
+
+	.time-pop {
 		background: rgba(0, 0, 0, .3);
 		width: 100%;
 		height: 100%;
@@ -383,7 +489,8 @@
 		z-index: 100;
 		overflow: hidden;
 		transition: all .2s;
-		.sfm-time{
+
+		.sfm-time {
 			position: fixed;
 			bottom: 0;
 			width: 100%;
@@ -392,11 +499,12 @@
 			padding: 30upx;
 			box-sizing: border-box;
 		}
-		.time-pop-box{
+
+		.time-pop-box {
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			margin-left:-280upx ;
+			margin-left: -280upx;
 			margin-top: -207upx;
 			width: 560upx;
 			height: 414upx;
@@ -406,30 +514,34 @@
 			padding-top: 60upx;
 			box-sizing: border-box;
 		}
-		input{
+
+		input {
 			width: 500upx;
 			height: 80upx;
-			border: 1upx solid #DEDEDE;
+			border: 1px solid #DEDEDE;
 			border-radius: 10upx;
 			padding-left: 40upx;
 			box-sizing: border-box;
 			margin: 30upx 30upx 60upx 30upx;
 		}
-		.confirm{
+
+		.confirm {
 			width: 200upx;
 			line-height: 80upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			border-radius: 10upx;
 			margin-right: 20upx;
 		}
-		.cancel{
+
+		.cancel {
 			width: 280upx;
 			line-height: 80upx;
 			background: linear-gradient(81deg, #6D99F8 0%, #3C66DF 100%);
 			border-radius: 10upx;
 			border: none;
 		}
-		.sanjiao{
+
+		.sanjiao {
 			width: 0;
 			height: 0;
 			border: 13upx solid transparent;
@@ -439,17 +551,21 @@
 			right: 82upx;
 		}
 	}
-	.radio-box{
+
+	.radio-box {
 		margin: 50upx 30upx 52upx 30upx;
-		.radio{
+		.mm:nth-child(2){
+			margin-right: 30upx;
+		}
+		.radio {
 			width: 32upx;
 			height: 32upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			border-radius: 16upx;
 			position: relative;
 		}
-		.radio:after{
-			content:"";
+		.radio.active:after {
+			content: "";
 			position: absolute;
 			left: 50%;
 			top: 50%;
@@ -461,5 +577,22 @@
 			background: #FFAC68;
 		}
 	}
-	
+	.previewimg{
+		position: fixed;
+		background: rgba(0, 0, 0, .3);
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: 100;
+		transition: all .2s;
+		image{
+			width: 400upx;
+			height: 400upx;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+		}
+	}
 </style>

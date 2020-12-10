@@ -4,163 +4,186 @@
 			<view class="flex flex_al-cen flex_ar" style="padding-top: 30upx;padding-bottom: 22upx;">
 				<view class="uni-tab-item" v-for="(tab,index) in homenavList" :key="tab.id" :id="tab.id" :ref="'tabitem'+index"
 				 :data-id="index" :data-current="index" @click="ontabtap">
-					<text class="uni-tab-item-title" :class="tabIndex==index ? 'uni-tab-item-title-active' : ''">{{tab.name}}</text>
+					<text class="uni-tab-item-title" :class="tabIndex==index ? 'uni-tab-item-title-active' :''">{{tab.name}}</text>
 				</view>
 			</view>
 		</scroll-view>
-		<swiper class="tab-box" ref="swiper1" :current="tabIndex" :duration="100" @change="onswiperchange" @animationfinish="animationfinish"
-		 style="margin-top: 88rpx;">
-			<swiper-item class="swiper-item" v-for="(page, index) in homenavList" :key="index">
-				<scroll-view scroll-y>
-					<block>
-						<view class="component">
+						<view class="component" style="padding-top: 80upx;">
 							<!-- 催单 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===3'
-								:productitem='list'
-								 @tap="GoreminDetail">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：{{list.bianhao}}</text>
-										<text class="colorfac font28">催单中</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">{{list.total}}</text>
+							<view class="page-item" v-if='tabIndex===4'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'催单中')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">催单中</text>
 										</view>
-										<view class="handbtn font32 colorfff text_cen">处理</view>
-									</view>
-								</listitem>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="handbtn font32 colorfff text_cen" @tap.stop="handps(list,2)">处理</view>
+										</view>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
 							</view>
 							<!-- 待接单 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===0' 
-								:productitem='list'
-								@tap="GoreceiveDetail(list)">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
-										<text class="colorfac font28">待接单</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+							<view class="page-item" v-if='tabIndex===0'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'待接单')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">待接单</text>
 										</view>
-										<view class="flex">
-											<view class="refusebtn mr font32 color999 text_cen" @tap.stop="handRefuse">拒绝</view>
-											<view class="handbtn font32 colorfff text_cen" @tap.stop="Receorder">接单</view>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="flex">
+												<view class="refusebtn mr font32 color999 text_cen" @tap.stop="handRefuse(list)">拒绝</view>
+												<view class="handbtn font32 colorfff text_cen" @tap.stop="Receorder(list)">接单</view>
+											</view>
 										</view>
-
-									</view>
-								</listitem>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
 							</view>
 							<!-- 待配送 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===1' 
-								:productitem='list'
-								@tap="GodeliveDetail">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
-										<text class="colorfac font28">待配送</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+							<view class="page-item" v-if='tabIndex===1'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'待配送')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">待配送</text>
 										</view>
-										<view class="handbtn font32 colorfff text_cen" @tap.stop="handps">配送</view>
-									</view>
-								</listitem>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="handbtn font32 colorfff text_cen" @tap.stop="handps(list,1)">配送</view>
+										</view>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
+							</view>
+							<!-- 配送中 -->
+							<view class="page-item" v-if='tabIndex===2'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'配送中')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">配送中</text>
+										</view>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<!-- <view class="handbtn font32 colorfff text_cen">配送中</view> -->
+										</view>
+									</listitem>
+								</view>
 							</view>
 							<!-- 待自提 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in jDlist" :key="i" v-if='tabIndex===2' 
-								:productitem='list'
-								@tap="GoraiseDetail">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
-										<text class="colorfac font28">待自提</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+							<view class="page-item" v-if='tabIndex===3'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'待自提')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">待自提</text>
 										</view>
-										<view class="handbtn font32 colorfff text_cen">扫码核销</view>
-									</view>
-								</listitem>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="handbtn font32 colorfff text_cen" @tap.stop="handps(list,3)">确认自取</view>
+										</view>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
 							</view>
 							<!-- 退款 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===4' 
-								:productitem='list'
-								@tap="GoRefundDetails">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
-										<text class="colorfac font28">退款中</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+							<view class="page-item" v-if='tabIndex===5'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'退款中')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">退款中</text>
 										</view>
-										<view class="handbtn font32 colorfff text_cen">退款</view>
-									</view>
-								</listitem>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="handbtn font32 colorfff text_cen" @tap.stop="handps(list,4)">退款</view>
+										</view>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
 							</view>
 							<!-- 预订单 -->
-							<view class="page-item">
-								<listitem class="pageitem" v-for="(list,i) in 3" :key="i" v-if='tabIndex===5' 
-								:productitem='list'
-								@tap="GovoucherDetail">
-									<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-										<text class="color333 font28">订单编号：D20200921152114</text>
-										<text class="colorfac font28">待配送</text>
-									</view>
-									<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
-										<view class="colorff5 font22">
-											￥<text class="font36">31.00</text>
+							<view class="page-item" v-if='tabIndex===6'>
+								<view v-if="orderList.length!==0">
+									<listitem class="pageitem" v-for="(list,i) in orderList" :key="i" :productitem='list' @tap="GoreceiveDetail(list,'待配送')">
+										<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
+											<text class="color333 font28">订单编号：{{list.order_sn}}</text>
+											<text class="colorfac font28">待配送</text>
 										</view>
-										<view class="handbtn font32 colorfff text_cen">配送</view>
-									</view>
-								</listitem>
+										<view class="flex flex_be flex_al-cen order-bot" slot="orderbot">
+											<view class="colorff5 font22">
+												￥<text class="font36">{{list.total_money}}</text>
+											</view>
+											<view class="handbtn font32 colorfff text_cen" @tap.stop="handps(list,1)">配送</view>
+										</view>
+									</listitem>
+								</view>
+								<!-- <view v-else class="flex flex_jus-cen flex_al-cen font26 color666">-没有更多数据拉(*^_^*)-</view> -->
 							</view>
+							<!-- 进行中 -->
 						</view>
-					</block>
-				</scroll-view>
-			</swiper-item>
-		</swiper>
+		<!-- 抢单弹框 -->
 		<Pop>
 			<view class="color3434 bold font36 successtxt" slot="successtxt">接单成功</view>
 			<view class="color9a9a font26" slot="subtet">记得准时出货哦</view>
 			<view class="btnpop font32 text_cen colorfff" slot='btnpop' @tap="hanKnow">知道了</view>
 		</Pop>
-		<refusepop v-if="isConcatPop">
+		<!-- 拒绝弹框 -->
+		<refusepop v-if="isConcatPop" :deleteType=4>
 			<view slot="poptitle">
 				<view class="poptitle bold color333 font36">确认拒绝</view>
 				<view class="color999 font500 font26">拒绝后订单将被退回</view>
 			</view>
 		</refusepop>
+		<!-- 联系一键拨号弹框 -->
 		<concatpop v-if="isRefusePop"></concatpop>
+		<uni-load-more :loadingType="loadingType" />
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	import listitem from '@/components/listItem/listItem.vue'
 	import Pop from '@/components/PopBox/PopBox.vue'
 	import refusepop from '@/components/refusePop/refusePop.vue'
 	import concatpop from '@/components/ConcatPop/ConcatPop.vue'
-	import {
-		mapState,
-	} from 'vuex';
+	import UniLoadMore from "@/components/uni-load-more.vue"
 	export default {
 		components: {
 			listitem,
 			Pop,
 			refusepop,
-			concatpop
+			concatpop,
+			UniLoadMore
 		},
 		computed: {
 			...mapState({
 				isPop: (state) => state.isPop,
 				isConcatPop: (state) => state.isConcatPop,
 				isRefusePop: (state) => state.isRefusePop,
+				supplier_id: (state) => state.supplier_id, //商户id
+				refuseOrder: (state) => state.refuseOrder, //拒接接单
 			}),
+			
 		},
 		data() {
 			return {
@@ -175,55 +198,92 @@
 						newsid: 1
 					},
 					{
+						id: "tab02",
+						name: '配送中',
+						newsid: 2
+					},
+					{
 						id: "tab03",
 						name: '待自提',
-						newsid: 2
+						newsid: 3
 					},
 					{
 						id: "tab04",
 						name: '催单',
-						newsid: 3
+						newsid: 4
 					},
 					{
 						id: "tab05",
 						name: '退款',
-						newsid: 4
+						newsid: 5
 					},
 					{
 						id: "tab06",
 						name: '预订单',
-						newsid: 5
+						newsid: 6
 					},
 				],
 				tabIndex: 0,
-				scrollInto: '',
+				scrollInto: "",
 				indicatorLineLeft: 64,
 				isTap: false,
-				jDlist:[
-					{
-						bianhao:'D20200921152114',
-						name:'单人试吃套餐二',
-						name1:'百事可乐(冰)',
-						num:1,
-						img:require('../../../static/img/pltu.png'),
-						price:28,
-						dbfei:5,
-						total:31
-					},
-					{
-						bianhao:'D20200921152114',
-						name:'单人试吃套餐san',
-						name1:'百事可乐(冰)',
-						num:1,
-						img:require('../../../static/img/pltu.png'),
-						price:28,
-						dbfei:5,
-						total:31
-					}
-				]
+				orderList: [], //订单列表数据
+				pages:1,
+				loadingType: "",
 			}
 		},
+		onLoad() {
+			this.orderList=[]
+			this.getOrderCenter()
+			if (!this.supplier_id) {
+				uni.switchTab({
+					url: '../../register/register',
+				})
+			}
+			console.log(this.supplier_id)
+		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			this.pages = 1;
+			this.orderList = []
+			this.getOrderCenter()
+		},
+		// 上拉加载
+		onReachBottom() {
+			this.pages++;
+			this.getOrderCenter()
+		},
 		methods: {
+			getOrderCenter() { //获取订单列表
+				console.log('???')
+				let that = this;
+				let params = {
+					id: that.supplier_id,
+					type:that.tabIndex+1,
+					page: that.pages,
+				}
+				that.request.getdata('getOrderList', params).then(res => {
+					// this.orderList = res.data.orderList
+					console.log(res, '订单列表')
+					uni.stopPullDownRefresh();
+					console.log(res, '订单列表')
+					
+					if (that.orderList.length < 1) {
+						console.log('23232')
+						that.orderList = res.data.orderList
+					} else {
+						console.log('6888877')
+						res.data.orderList.map((news) => {
+							that.orderList.push(news);
+						});
+					}
+					if (that.orderList.length == res.data.total) {
+						that.loadingType = 2;
+					} else {
+						that.loadingType = 0;
+					}
+				})
+			},
 			ontabtap(e) {
 				let index = e.currentTarget.dataset.id;
 				this.tabIndex = index
@@ -233,60 +293,75 @@
 					var offsetX = data.left
 					var offsetXEl = data.right
 					var lineL = (2 * (offsetXEl) - (1.5 * (offsetXEl - offsetX)))
-					// this.updateIndicator(lineL);
 				}).exec();
-			},
-			onswiperchange(e) {
-				let index = e.detail.current;
-				this.tabIndex = index
-				this.scrollInto = this.homenavList[index].id
+				this.pages = 1;
+				this.orderList = [];
+				this.getOrderCenter()
 			},
 			animationfinish(e) {
 				let index = e.detail.current;
 				this.tabIndex = index
 			},
-			GoreminDetail() {
+			GoreceiveDetail(item, text) { //订单详情
 				uni.navigateTo({
-					url: '../../Detail/reminDetail/reminDetail'
+					url: `../../Detail/receiveDetail/receiveDetail?order_id=${item.id}&text=${text}`
 				});
 			},
-			GoreceiveDetail(item) {
-				uni.navigateTo({
-					url: '../../Detail/receiveDetail/receiveDetail?item='+encodeURIComponent(JSON.stringify(item))
-				});
-			},
-			GodeliveDetail() {
-				uni.navigateTo({
-					url: '../../Detail/delivereDetail/delivereDetail'
-				});
-			},
-			GoraiseDetail() {
-				uni.navigateTo({
-					url: '../../Detail/raiseDetail/raiseDetail'
-				});
-			},
-			GoRefundDetails() {
-				uni.navigateTo({
-					url: '../../Detail/RefundDetails'
+			Receorder(item) { //接单
+				let that = this;
+				let params = {
+					order_id: item.id,
+					supplier_id: this.supplier_id,
+					type: 1, //2:拒绝接单 1:接单
+				}
+				that.request.getdata('getOrderTaking', params).then(res => {
+					that.$store.commit("showPop", true);
+					console.log(res, '接单')
+					this.pages = 1;
+					that.orderList = [];
+					console.log(that.orderList);
+					that.getOrderCenter()
 				})
 			},
-			GovoucherDetail() {
-				uni.navigateTo({
-					url: '../../Detail/voucherDetail'
-				})
+
+			handRefuse(item) { //拒接接单
+				this.$store.commit("showConcatPop", true);
+				this.$store.commit("CancleOrder", item);
 			},
-			Receorder() {
-				this.$store.commit("showPop", true);
-			},
+
 			hanKnow() {
 				this.$store.commit("showPop", false);
+				this.pages=1;
+				this.orderList=[]
+				this.getOrderCenter()
 			},
-			handRefuse() {
-				this.$store.commit("showConcatPop", true);
+			handps(item,num) { //1=配送2=催单3=自取确认4=退款
+				// this.$store.commit("handTel", item.supplier_tel);
+				// this.$store.commit("showRefuse", true);
+				
+				let that = this;
+				let params = {
+					order_id: item.id,
+					supplier_id: that.supplier_id,
+					type: num,
+				}
+				that.request.getdata('getorderSend', params).then(res => {
+					console.log(res, '配送')
+					setTimeout(function(){
+						{
+							uni.showToast({
+								title: res.msg,
+								icon: 'none',
+								duration: 3000
+							});
+						}
+					},3000)
+					this.pages = 1;
+					that.orderList = [];
+					console.log(that.orderList);
+					this.getOrderCenter()
+				})
 			},
-			handps() {
-				this.$store.commit("showRefuse", true);
-			}
 		}
 	}
 </script>
@@ -367,10 +442,6 @@
 
 	.pageitem {
 		margin-bottom: 30upx;
-	}
-
-	.component {
-		margin-bottom: 200upx;
 	}
 
 	.successtxt {

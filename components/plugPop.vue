@@ -13,33 +13,78 @@
 
 <script>
 	import {
-		mapState, 
+		mapState,
 	} from 'vuex';
 	export default {
+		props: {
+			cattype: {
+				type: String,
+				default: ""
+			}
+		},
 		data() {
 			return {
-				
+
 			}
 		},
 		computed: {
-		    ...mapState({
-				ispulgPop:(state) => state.ispulgPop
+			...mapState({
+				ispulgPop: (state) => state.ispulgPop,
+				addcat: (state) => state.addcat,
 			}),
 		},
 		methods: {
-			handcancel(){
+			handcancel() {
+				console.log(this.cattype)
+				if (this.addcat.cat_name == "") {
+					uni.showToast({
+						title: '请填写',
+						icon: 'none',
+						duration: 3000
+					});
+					return false;
+				}
+				if (this.cattype == 1) {
+					let that = this;
+					let params = {
+						supplier_id: this.supplier_id,
+						cat_name: this.addcat.cat_name,
+						attr: this.addcat.attr,
+					}
+
+					that.request.getdata('getSupplierAddCate', params).then(res => {
+						console.log(res, '添加分类')
+						this.$parent.getSupplier();
+					})
+				} else if (this.cattype == 2) {
+						let that = this;
+						let params = {
+							cat_id: this.addcat.cat_id,
+							cat_name:this.addcat.cat_name,
+							attr: this.addcat.attr,
+						}
+						that.request.getdata('getUpdateCate', params).then(res => {
+							console.log(res, '修改分类')
+							this.$parent.getSupplier();
+						})
+				}
+
 				this.$store.commit("showPlugPop", false);
 			},
-			handconfirm(){
+			handconfirm() {
 				this.$store.commit("showPlugPop", false);
+				this.$store.commit("AddCate", {
+					cat_name: "",
+					attr: "",
+				});
 			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.popbox{
-		background: rgba(0,0,0,.3);
+	.popbox {
+		background: rgba(0, 0, 0, .3);
 		width: 100%;
 		height: 100%;
 		position: fixed;
@@ -48,29 +93,32 @@
 		z-index: 100;
 		overflow: hidden;
 		transition: all .2s;
-		.popup{
+
+		.popup {
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			margin-left:-280upx ;
+			margin-left: -280upx;
 			margin-top: -317upx;
 			width: 560upx;
 			height: 634upx;
 			background: #FFFFFF;
 			border-radius: 20upx;
 			padding-bottom: 60upx;
-			
-			.poptitle{
+
+			.poptitle {
 				margin: 60upx 0 38upx 0;
 			}
-			.confirm{
+
+			.confirm {
 				width: 200upx;
 				line-height: 80upx;
-				border: 1upx solid #EEEEEE;
+				border: 1px solid #EEEEEE;
 				border-radius: 10upx;
-				
+
 			}
-			.cancel{
+
+			.cancel {
 				width: 280upx;
 				line-height: 80upx;
 				background: linear-gradient(81deg, #6D99F8 0%, #3C66DF 100%);
@@ -79,6 +127,4 @@
 			}
 		}
 	}
-	
-	
 </style>

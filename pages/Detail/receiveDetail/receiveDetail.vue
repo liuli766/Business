@@ -1,47 +1,48 @@
 <template>
+<!--待接单详情  -->
 	<view class="comm">
 		<view class="remindetail">
-			<listitem>
+			<listitem :productitem='OrderInfo'>
 				<view class="order-title flex flex_be flex_al-cen" slot='ordernum'>
-					<text class="color333 font28">订单编号：D20200921152114</text>
-					<text class="colorfac font28">待接单</text>
+					<text class="color333 font28">订单编号：{{OrderInfo.order_sn}}</text>
+					<text class="colorfac font28">{{txt}}</text>
 				</view>
 				<view class="flex flex_be deliver" slot="deliver">
 					<text class="font28 color333">配送费</text>
-					<text class="font28 color333">￥5</text>
+					<text class="font28 color333">￥{{OrderInfo.delivery_money}}</text>
 				</view>
 				<view slot="orderbot">
 					<view class="order-box flex">
 						<view class="mr">
 							<text class="font26">共计:</text>
-							<text class="colorff6 font32">￥37.00</text>
+							<text class="colorff6 font32">￥{{OrderInfo.total_money}}</text>
 						</view>
 						<view>
 							<text class="font26">预计收入:</text>
-							<text class="colorff6 font32">￥37.00</text>
+							<text class="colorff6 font32">￥{{OrderInfo.yuji_money}}</text>
 						</view>
 					</view>
 					<view class="flex flex_be font28 pad30">
 						<text class="color333">备注信息</text>
-						<text class="color666">牛肉面只要牛肉不要面</text>
+						<text class="color666">{{OrderInfo.remarks?OrderInfo.remarks:'无'}}</text>
 					</view>
 					<view class="flex flex_be  font32 color666" style="padding-top: 40upx;">
-						<view class="concatrider flex flex_al-cen flex_jus-cen">
+						<view class="concatrider flex flex_al-cen flex_jus-cen" @tap="concatRider(OrderInfo.postman_mobile)">
 							<text class="iconfont icon-dianhua colorfac"></text>
 							<text>联系骑手</text>
 						</view>
-						<view class="concatcustomers flex flex_al-cen flex_jus-cen">
+						<view class="concatcustomers flex flex_al-cen flex_jus-cen" @tap="concatCustomers(OrderInfo.mobile)">
 							<text class="iconfont icon-dianhua colorfac"></text>
 							<text>联系顾客</text>
 						</view>
 					</view>
 				</view>
 			</listitem>
-			<orderinfo>
-				<view class="colorfff text_cen flex mr ml font500 font32" slot="detailbtn" style="margin-top: 60upx;">
+			<orderinfo :orderinfo='OrderInfo'>
+				<!-- <view class="colorfff text_cen flex mr ml font500 font32" slot="detailbtn" style="margin-top: 60upx;">
 					<view class="btn1 color666 mr" @tap="handRefuse">拒绝</view>
 					<view class="btn2 colorfff" @tap="Receorder">接单</view>
-				</view>
+				</view> -->
 			</orderinfo>
 		</view>
 		<Pop>
@@ -55,7 +56,7 @@
 				<view class="color999 font500 font26">拒绝后订单将被退回</view>
 			</view>
 		</refusepop>
-		<concatpop v-if="isRefusePop"></concatpop>
+		<concatpop v-if="isRefusePop" :phone='1'></concatpop>
 	</view>
 </template>
 
@@ -78,12 +79,21 @@
 		},
 		data() {
 			return {
-
+				OrderInfo:[],//订单详情数据
+				txt:""
 			}
 		},
 		onLoad(option) {
-			const item = JSON.parse(decodeURIComponent(option.item));
-			console.log(item)
+			const order_id = option.order_id;
+			this.txt=option.text
+			let that=this;
+			let params ={
+				order_id,
+			}
+			that.request.getdata('getOrderInfo', params).then(res => {
+				this.OrderInfo = res.data
+				console.log(res, '订单详情')
+			})
 		},
 		computed: {
 			...mapState({
@@ -93,6 +103,26 @@
 			}),
 		},
 		methods: {
+			concatRider(tel){ //联系骑手
+				if(tel == '骑手未接单'){
+					console.log(1)
+					uni.showToast({
+						title: '骑手未接单',
+						icon: 'none',
+						duration: 3000
+					});
+				}else{
+					this.$store.commit("showRefuse", true);
+					console.log(2)
+					 this.$store.commit("handTel", tel);
+				}
+					
+			},
+			concatCustomers(tel){//联系顾客
+				this.$store.commit("showRefuse", true);
+				this.$store.commit("handTel", tel);
+			},
+				
 			Receorder() {
 				this.$store.commit("showPop", true);
 			},
@@ -137,14 +167,14 @@
 		.concatcustomers {
 			width: 300upx;
 			height: 80upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			box-shadow: 0px 5upx 20upx 0px rgba(209, 108, 77, 0.2);
 			border-radius: 10upx;
 		}
 		.btn1,.btn2{
 			width: 300upx;
 			line-height: 80upx;
-			border: 1upx solid #EEEEEE;
+			border: 1px solid #EEEEEE;
 			box-shadow: 0px 5upx 20upx 0px rgba(209, 108, 77, 0.2);
 			border-radius: 10upx;
 		}

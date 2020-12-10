@@ -5,12 +5,12 @@
 			<image src="../../../static/img/zjbg.png"></image>
 			<view class="commission-box flex flex_al-cen text_cen">
 				<view class="font500 colorfff flex flex-col frist">
-					<text class="commission font28">当前佣金(元)</text>
-					<text class="commission-price">128.50</text>
+					<text class="commission font28">当前余额(元)</text>
+					<text class="commission-price">{{supplier_money}}</text>
 				</view>
 				<view class="font500 colorfff flex flex-col two">
-					<text class="commission font28">历史佣金(元)</text>
-					<text class="commission-price">24,00.00</text>
+					<text class="commission font28">历史总订单金额(元)</text>
+					<text class="commission-price">{{order_money?order_money:'0'}}</text>
 				</view>
 			</view>
 		</view>
@@ -32,16 +32,36 @@
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	export default {
 		data() {
 			return {
-				
+				supplier_money:"",//当前余额
+				order_money:"",//历史总订单金额
 			}
 		},
+		computed: {
+			...mapState({
+				supplier_id: (state) => state.supplier_id, //商户id
+			}),
+		},
+		onLoad() {
+			let that = this
+			let params = {
+				supplier_id: that.supplier_id,
+			}
+			that.request.getdata('getsupplierMoney', params).then(res => {
+				that.supplier_money=res.data.supplier_money
+				that.order_money=res.data.order_money
+			})
+		},
+		
 		methods: {
 			Gocash() {
 				uni.navigateTo({
-					url: './cash'
+					url: './cash?user_money=${this.supplier_money}'
 				})
 			},
 			Gocardinfo() {

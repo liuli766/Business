@@ -122,7 +122,7 @@
 			.cancel {
 				width: 200upx;
 				line-height: 80upx;
-				border: 1upx solid #CCCCCC;
+				border: 1px solid #CCCCCC;
 				box-shadow: 0px 5upx 20upx 0px rgba(209, 108, 77, 0.2);
 				border-radius: 10upx;
 				margin: 0 20upx 0 30upx;

@@ -4,7 +4,10 @@
 			<image src="../../../static/img/about.png" mode=""></image>
 			<view class="font28 color333">这里是平台介绍</view>
 		</view>
-		<view class="commbtn text_cen colorfff">联系客服</view>
+		
+		<button open-type='contact' session-from=server class="commbtn text_cen colorfff">联系客服</button>
+
+
 	</view>
 </template>
 
@@ -12,11 +15,25 @@
 	export default {
 		data() {
 			return {
-
+					server:""
 			}
 		},
+		onLoad() {
+			this.aboutUs();
+			this.getxieyi();
+		},
 		methods: {
-
+			aboutUs(){
+				this.request.getdata('getaboutUs').then(res => {
+					console.log(res, '联系客服')
+					this.server=res.info
+				})
+			},
+			getxieyi(){
+				this.request.getdata('getxieyi').then(res => {
+					console.log(res, '协议')
+				})
+			}
 		}
 	}
 </script>
